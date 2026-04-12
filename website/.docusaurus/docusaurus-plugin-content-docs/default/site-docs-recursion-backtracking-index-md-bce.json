@@ -1,0 +1,20 @@
+{
+  "id": "recursion-backtracking/index",
+  "title": "Recursion Backtracking",
+  "description": "| Problem | Difficulty | Tags |",
+  "source": "@site/docs/recursion-backtracking/index.md",
+  "sourceDirName": "recursion-backtracking",
+  "slug": "/recursion-backtracking",
+  "permalink": "/dsa/recursion-backtracking",
+  "draft": false,
+  "unlisted": false,
+  "tags": [],
+  "version": "current",
+  "frontMatter": {
+    "title": "Recursion Backtracking",
+    "slug": "/recursion-backtracking",
+    "pagination_prev": null,
+    "pagination_next": null
+  },
+  "sidebar": "tutorialSidebar"
+}

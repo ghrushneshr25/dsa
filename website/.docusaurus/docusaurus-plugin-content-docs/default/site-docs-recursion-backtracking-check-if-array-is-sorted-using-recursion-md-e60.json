@@ -1,0 +1,21 @@
+{
+  "id": "recursion-backtracking/check-if-array-is-sorted-using-recursion",
+  "title": "Check if Array is Sorted Using Recursion",
+  "description": "Difficulty: Easy",
+  "source": "@site/docs/recursion-backtracking/check-if-array-is-sorted-using-recursion.md",
+  "sourceDirName": "recursion-backtracking",
+  "slug": "/recursion-backtracking/check-if-array-is-sorted-using-recursion",
+  "permalink": "/dsa/recursion-backtracking/check-if-array-is-sorted-using-recursion",
+  "draft": false,
+  "unlisted": false,
+  "tags": [],
+  "version": "current",
+  "frontMatter": {
+    "title": "Check if Array is Sorted Using Recursion"
+  },
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "Towers of Hanoi",
+    "permalink": "/dsa/recursion-backtracking/towers-of-hanoi"
+  }
+}
