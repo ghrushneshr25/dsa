@@ -1,0 +1,105 @@
+# Checks out dsa (this) + docgen + dsa-pavilion, runs docgen, then commits and
+# pushes to the dsa-pavilion site repo (so its deploy workflow runs).
+#
+# One-time setup (GitHub):
+# 1. Create repos: dsa, docgen, dsa-pavilion
+# 2. In *this* (dsa) repo: Settings → Secrets and variables → Actions
+#    - Add secret DOCS_WRITE_TOKEN: fine-grained or classic PAT with
+#      contents: write on ghrushneshr25/dsa-pavilion (and read on docgen if private).
+#    (GITHUB_TOKEN in the job can push to *this* repo for readme updates only;
+#     it cannot push to another repo — hence DOCS_WRITE_TOKEN for dsa-pavilion.)
+# 3. Adjust DOCGEN_REPO / PAVILION_REPO if your remotes use different names.
+
+name: Regenerate documentation
+
+on:
+  push:
+    branches: [master, main]
+    paths:
+      - "**/*.go"
+      - "go.mod"
+      - "go.sum"
+      - ".github/workflows/regenerate-docs.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: docgen-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+
+env:
+  DOCGEN_REPO: ghrushneshr25/docgen
+  PAVILION_REPO: ghrushneshr25/dsa-pavilion
+
+jobs:
+  regen:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout DSA (this repository)
+        uses: actions/checkout@v4
+        with:
+          path: dsa
+          # persist-credentials default true — needed for the readme push step
+
+      - name: Checkout docgen
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ env.DOCGEN_REPO }}
+          path: docgen
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Checkout dsa-pavilion (write)
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ env.PAVILION_REPO }}
+          path: dsa-pavilion
+          token: ${{ secrets.DOCS_WRITE_TOKEN }}
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.24.x"
+
+      - name: Run docgen
+        working-directory: docgen
+        run: |
+          go run . \
+            -code "${GITHUB_WORKSPACE}/dsa" \
+            -docs "${GITHUB_WORKSPACE}/dsa-pavilion/docs" \
+            -sidebar "${GITHUB_WORKSPACE}/dsa-pavilion/sidebars.js" \
+            -readme "${GITHUB_WORKSPACE}/dsa/readme.md" \
+            -base "/dsa-pavilion/"
+
+      - name: Commit and push dsa-pavilion site
+        env:
+          TOKEN: ${{ secrets.DOCS_WRITE_TOKEN }}
+        run: |
+          set -euo pipefail
+          if [ -z "${TOKEN:-}" ]; then
+            echo "DOCS_WRITE_TOKEN is not set. Add a PAT with contents:write on ${PAVILION_REPO}."
+            exit 1
+          fi
+          if [ -z "$(git -C dsa-pavilion status --porcelain)" ]; then
+            echo "No changes under dsa-pavilion/"
+          else
+            git -C dsa-pavilion config user.name "github-actions[bot]"
+            git -C dsa-pavilion config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git -C dsa-pavilion add -A
+            git -C dsa-pavilion commit -m "docs: regenerate from ${GITHUB_REPOSITORY}@${GITHUB_SHA:0:7}"
+            git -C dsa-pavilion push
+          fi
+
+      - name: Commit and push readme in DSA (this) repo
+        run: |
+          set -euo pipefail
+          if [ -z "$(git -C dsa status --porcelain readme.md)" ]; then
+            echo "No readme change"
+            exit 0
+          fi
+          git -C dsa config user.name "github-actions[bot]"
+          git -C dsa config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git -C dsa add readme.md
+          git -C dsa commit -m "chore: regenerate readme from docgen" || { echo "Nothing to commit"; exit 0; }
+          git -C dsa push

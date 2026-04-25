@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+# Installed to .git/hooks/pre-commit by scripts/setup-git-hooks.sh
+set -euo pipefail
+ROOT="$(git rev-parse --show-toplevel)"
+exec "$ROOT/scripts/pre-commit.sh"
