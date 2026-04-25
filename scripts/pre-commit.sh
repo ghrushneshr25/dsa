@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# DSA code repository only: run tests. Doc generation is cross-repo; use docgen
-# locally (see docgen/generate.sh) or GitHub Actions on push.
+# Runs tests before each commit. Readme refresh happens in post-commit (amend) so it
+# lands in the same commit even if the IDE only staged some files.
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
