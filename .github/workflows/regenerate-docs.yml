@@ -71,7 +71,8 @@ jobs:
             -docs "${GITHUB_WORKSPACE}/dsa-pavilion/docs" \
             -sidebar "${GITHUB_WORKSPACE}/dsa-pavilion/sidebars.js" \
             -readme "${GITHUB_WORKSPACE}/dsa/readme.md" \
-            -base "/dsa-pavilion/"
+            -base "/dsa-pavilion/" \
+            -github-routes "${GITHUB_WORKSPACE}/dsa-pavilion/src/data/dsaGithubRoutes.json"
 
       - name: Commit and push dsa-pavilion site
         env:
