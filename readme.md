@@ -14,11 +14,5 @@
 
 | Problem | Difficulty | Tags | Description | Code | Tests |
 |--------|------------|------|-------------|------|-------|
-| circularlinkedlist | — | — | — | [Link](./linkedlist/circularlinkedlist.go) | — |
-| doublylinkedlist | — | — | — | [Link](./linkedlist/doublylinkedlist.go) | — |
-| problem1 | — | — | — | [Link](./linkedlist/problem1.go) | [Link](./linkedlist/test/problem1_test.go) |
 | Singly Linked List | Easy | linked-list, fundamentals | A singly linked list is a linear data structure where each node contains: - Data - Pointer to the next node The last nod | [Link](./linkedlist/singlelinkedlist.go) | — |
-| skiplinkedlist | — | — | — | [Link](./linkedlist/skiplinkedlist.go) | — |
-| unrolledlinkedlist | — | — | — | [Link](./linkedlist/unrolledlinkedlist.go) | — |
-| xorlinkedlist | — | — | — | [Link](./linkedlist/xorlinkedlist.go) | — |
 
