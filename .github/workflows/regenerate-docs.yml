@@ -50,12 +50,13 @@ jobs:
           path: docgen
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Checkout dsa-pavilion (write)
+      - name: Checkout dsa-pavilion
         uses: actions/checkout@v4
         with:
           repository: ${{ env.PAVILION_REPO }}
           path: dsa-pavilion
-          token: ${{ secrets.DOCS_WRITE_TOKEN }}
+          # Clone with PAT if set, else GITHUB token (enough to fetch public dsa-pavilion). Push still requires DOCS_WRITE_TOKEN.
+          token: ${{ secrets.DOCS_WRITE_TOKEN || github.token }}
 
       - name: Set up Go
         uses: actions/setup-go@v5
@@ -74,22 +75,22 @@ jobs:
 
       - name: Commit and push dsa-pavilion site
         env:
-          TOKEN: ${{ secrets.DOCS_WRITE_TOKEN }}
+          DOCS_WRITE_TOKEN: ${{ secrets.DOCS_WRITE_TOKEN }}
         run: |
           set -euo pipefail
-          if [ -z "${TOKEN:-}" ]; then
-            echo "DOCS_WRITE_TOKEN is not set. Add a PAT with contents:write on ${PAVILION_REPO}."
+          if [ -z "${DOCS_WRITE_TOKEN:-}" ]; then
+            echo "::error::Add secret DOCS_WRITE_TOKEN in this (dsa) repo: fine-grained PAT with Contents: Read and write on dsa-pavilion, or classic PAT with repo scope."
             exit 1
           fi
           if [ -z "$(git -C dsa-pavilion status --porcelain)" ]; then
             echo "No changes under dsa-pavilion/"
-          else
-            git -C dsa-pavilion config user.name "github-actions[bot]"
-            git -C dsa-pavilion config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-            git -C dsa-pavilion add -A
-            git -C dsa-pavilion commit -m "docs: regenerate from ${GITHUB_REPOSITORY}@${GITHUB_SHA:0:7}"
-            git -C dsa-pavilion push
+            exit 0
           fi
+          git -C dsa-pavilion config user.name "github-actions[bot]"
+          git -C dsa-pavilion config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git -C dsa-pavilion add -A
+          git -C dsa-pavilion commit -m "docs: regenerate from ${GITHUB_REPOSITORY}@${GITHUB_SHA:0:7}"
+          git -C dsa-pavilion push "https://x-access-token:${DOCS_WRITE_TOKEN}@github.com/${PAVILION_REPO}.git" HEAD:master
 
       - name: Commit and push readme in DSA (this) repo
         run: |
