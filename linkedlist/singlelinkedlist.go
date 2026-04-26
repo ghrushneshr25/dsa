@@ -23,6 +23,11 @@ Represents the linked list with head pointer and size.
 
 @subsection: Traversal
 Traversing means visiting each node from head to nil.
+
+@subsection: Insertion at Beginning
+Inserting the node the at the beginning of linked list
+Time : O(1)
+Space: O(1)
 */
 
 package linkedlist
@@ -65,5 +70,24 @@ func (list *LinkedList) Display() error {
 		fmt.Printf("%+v -> ", current.Data)
 		current = current.Next
 	}
+	return nil
+}
+
+// ================================
+// Insertion at Beginning
+// ================================
+
+func (list *LinkedList) InsertAtBeginning(data any) error {
+	node := &ListNode{
+		Data: data,
+		Next: nil,
+	}
+	if list.Head == nil {
+		list.Head = node
+	} else {
+		node.Next = list.Head
+		list.Head = node
+	}
+	list.Size++
 	return nil
 }
