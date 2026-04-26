@@ -10,24 +10,8 @@ A singly linked list is a linear data structure where each node contains:
 - Pointer to the next node
 
 The last node points to nil, indicating the end of the list.
-
 @section: Structure
-
-@subsection: ListNode
-Represents a single node in the linked list.
-
-@subsection: LinkedList
-Represents the linked list with head pointer and size.
-
 @section: Operations
-
-@subsection: Traversal
-Traversing means visiting each node from head to nil.
-
-@subsection: Insertion at Beginning
-Inserting the node the at the beginning of linked list
-Time : O(1)
-Space: O(1)
 */
 
 package linkedlist
@@ -37,28 +21,24 @@ import (
 	"fmt"
 )
 
-// ================================
-// ListNode Definition
-// ================================
-
+// @structure List Node
+// @description Represents a single node in the linked list.
 type ListNode struct {
 	Data any
 	Next *ListNode
 }
 
-// ================================
-// LinkedList Definition
-// ================================
-
+// @structure Linked List
+// @description Represents the linked list with head pointer and size.
 type LinkedList struct {
 	Head *ListNode
 	Size int
 }
 
-// ================================
-// Traversal
-// ================================
-
+// @operation Traversal
+// @description Traversing means visiting each node from head to nil.
+// @time: O(n)
+// @space: O(1)
 func (list *LinkedList) Display() error {
 	if list.Head == nil {
 		return errors.New("list is empty")
@@ -73,10 +53,10 @@ func (list *LinkedList) Display() error {
 	return nil
 }
 
-// ================================
-// Insertion at Beginning
-// ================================
-
+// @operation Insertion at Beginning
+// @description Inserting the node the at the beginning of linked list
+// @time: O(1)
+// @space: O(1)
 func (list *LinkedList) InsertAtBeginning(data any) error {
 	node := &ListNode{
 		Data: data,
