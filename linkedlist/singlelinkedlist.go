@@ -143,10 +143,8 @@ func (list *LinkedList) Insert(position int, data any) (err error) {
 		}
 		current = current.Next
 	}
-
 	node.Next = current.Next
 	current.Next = node
-
 	return
 }
 
