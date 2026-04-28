@@ -1,3 +1,4 @@
+// @index: 3
 // @problem: Generate Binary Strings
 // @difficulty: Easy
 // @tags: recursion, backtracking

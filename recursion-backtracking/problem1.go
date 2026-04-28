@@ -1,3 +1,4 @@
+// @index: 1
 // @problem: Towers of Hanoi
 // @difficulty: Easy
 // @tags: recursion, backtracking, divide-and-conquer

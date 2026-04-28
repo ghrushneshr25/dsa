@@ -1,4 +1,5 @@
 // @type: concept
+// @index: 1
 // @title: Singly Linked List
 // @tags: linked-list, fundamentals
 // @difficulty: Easy

@@ -1,3 +1,4 @@
+// @index: 4
 // @problem: Generate K-ary Strings
 // @difficulty: Easy
 // @tags: recursion, backtracking
