@@ -75,7 +75,7 @@ func (list *CircularLinkedList) GetSize() int {
 }
 
 // @operation Insert at Front
-// @description Inserting the node the at the beginning of circular linked list
+// @description Inserting the node at the beginning of circular linked list
 // @time: O(n)
 // @space: O(1)
 func (list *CircularLinkedList) InsertAtFront(data any) (err error) {
@@ -104,7 +104,7 @@ func (list *CircularLinkedList) InsertAtFront(data any) (err error) {
 }
 
 // @operation Insert at End
-// @description Inserting the node the at the end of circular linked list
+// @description Inserting the node at the end of circular linked list
 // @time: O(n)
 // @space: O(1)
 func (list *CircularLinkedList) InsertAtEnd(data any) (err error) {
@@ -131,10 +131,10 @@ func (list *CircularLinkedList) InsertAtEnd(data any) (err error) {
 }
 
 // @operation Insert at Position
-// @description Inserting the node the at a given position of circular linked list
+// @description Inserting the node at a given position of circular linked list
 // @time: O(n)
 // @space: O(1)
-func (list *CircularLinkedList) InsertAtPosition(position int, data any) (err error) {
+func (list *CircularLinkedList) Insert(position int, data any) (err error) {
 	newNode := &CircularListNode{
 		Data: data,
 	}
@@ -165,5 +165,100 @@ func (list *CircularLinkedList) InsertAtPosition(position int, data any) (err er
 	current.Next = newNode
 	list.IncreaseSize()
 
+	return
+}
+
+// @operation Delete From Front
+// @description Deleting the node from the beginning of circular linked list
+// @time: O(n)
+// @space: O(1)
+func (list *CircularLinkedList) DeleteFromFront() (data any, err error) {
+	if list.GetSize() == 0 {
+		err = fmt.Errorf("empty list")
+		return
+	}
+
+	data = list.Head.Data
+
+	if list.GetSize() == 1 {
+		list.Head = nil
+		list.DecreaseSize()
+		return
+	}
+	current := list.Head
+	for current.Next != list.Head {
+		current = current.Next
+	}
+	current.Next = list.Head.Next
+	list.Head = list.Head.Next
+	list.DecreaseSize()
+	return
+}
+
+// @operation Delete From End
+// @description Deleting the node from the end of circular linked list
+// @time: O(n)
+// @space: O(1)
+func (list *CircularLinkedList) DeleteFromEnd() (data any, err error) {
+	if list.GetSize() == 0 {
+		err = fmt.Errorf("empty list")
+		return
+	}
+
+	data = list.Head.Data
+
+	if list.GetSize() == 1 {
+		list.Head = nil
+		list.DecreaseSize()
+		return
+	}
+
+	current := list.Head
+
+	for current.Next.Next != list.Head {
+		current = current.Next
+	}
+	data = current.Next.Data
+	current.Next = list.Head
+	list.DecreaseSize()
+	return
+}
+
+// @operation Delete From Position
+// @description Deleting the node at a given position of circular linked list
+// @time: O(n)
+// @space: O(1)
+func (list *CircularLinkedList) Delete(position int) (data any, err error) {
+	if list.GetSize() == 0 {
+		err = fmt.Errorf("empty list")
+		return
+	}
+
+	if position < 0 {
+		err = fmt.Errorf("invalid position")
+		return
+	}
+
+	position = (position-1)%list.GetSize() + 1
+
+	if list.GetSize() == 1 || position == 1 {
+		return list.DeleteFromFront()
+	}
+
+	if list.GetSize() == position {
+		return list.DeleteFromEnd()
+	}
+
+	count := 1
+	current := list.Head
+	for count != position-1 {
+		current = current.Next
+		count++
+	}
+
+	data = current.Next.Data
+
+	current.Next = current.Next.Next
+	list.DecreaseSize()
 	return
 }
