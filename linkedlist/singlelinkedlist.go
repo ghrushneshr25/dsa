@@ -8,8 +8,8 @@
 A singly linked list is a linear data structure where each node contains:
 - Data
 - Pointer to the next node
-
 The last node points to nil, indicating the end of the list.
+
 @section: Structure
 @section: Operations
 */
