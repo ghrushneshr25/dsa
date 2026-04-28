@@ -27,6 +27,7 @@ jobs:
       - name: Checkout DSA
         uses: actions/checkout@v4
         with:
+          path: dsa
           persist-credentials: true
 
       - name: Checkout docgen
@@ -43,17 +44,17 @@ jobs:
 
       - name: Generate readme.md
         run: |
-          (cd docgen && go run . -readme-only -code "${GITHUB_WORKSPACE}" -readme "${GITHUB_WORKSPACE}/readme.md")
+          (cd docgen && go run . -readme-only -code "${GITHUB_WORKSPACE}/dsa" -readme "${GITHUB_WORKSPACE}/dsa/readme.md")
 
       - name: Commit and push if changed
         run: |
           set -euo pipefail
-          if [ -z "$(git status --porcelain readme.md)" ]; then
+          if [ -z "$(git -C dsa status --porcelain readme.md)" ]; then
             echo "No readme change"
             exit 0
           fi
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add readme.md
-          git commit -m "chore: regenerate readme from docgen"
-          git push
+          git -C dsa config user.name "github-actions[bot]"
+          git -C dsa config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git -C dsa add readme.md
+          git -C dsa commit -m "chore: regenerate readme from docgen"
+          git -C dsa push
