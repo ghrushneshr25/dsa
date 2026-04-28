@@ -37,15 +37,16 @@ type LinkedList struct {
 // @description Traversing means visiting each node from head to nil.
 // @time: O(n)
 // @space: O(1)
-func (list *LinkedList) Display() (err error) {
+func (list *LinkedList) Display() (result string, err error) {
 	if list.Head == nil {
-		return errors.New("list is empty")
+		err = errors.New("list is empty")
+		return
 	}
 
 	current := list.Head
 
 	for current != nil {
-		fmt.Printf("%+v -> ", current.Data)
+		result = fmt.Sprintf("%+v -> %+v ", result, current.Data)
 		current = current.Next
 	}
 	return
