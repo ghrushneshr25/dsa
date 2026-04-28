@@ -6,33 +6,13 @@ on:
   pull_request:
   workflow_dispatch:
 
-env:
-  DOCGEN_REPO: ghrushneshr25/docgen
-
 jobs:
   test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
-      - uses: actions/checkout@v4
-        with:
-          repository: ${{ env.DOCGEN_REPO }}
-          path: docgen
-          token: ${{ secrets.GITHUB_TOKEN }}
-
       - uses: actions/setup-go@v5
         with:
           go-version: "1.25.x"
-
       - name: Test
         run: go test ./...
-
-      - name: Verify readme.md matches docgen
-        run: |
-          set -euo pipefail
-          (cd docgen && go run . -readme-only -code "${GITHUB_WORKSPACE}" -readme "${GITHUB_WORKSPACE}/readme.md")
-          git diff --exit-code readme.md || {
-            echo "::error::readme.md is out of date. From repo root next to docgen: (cd ../docgen && go run . -readme-only -code \"\$(pwd)\" -readme \"\$(pwd)/readme.md\") then commit readme.md. Or: make readme"
-            exit 1
-          }

@@ -1,0 +1,59 @@
+# Regenerates readme.md via docgen and commits back to this branch (no local pre-commit).
+name: Regenerate readme
+
+on:
+  push:
+    paths:
+      - "**/*.go"
+      - "go.mod"
+      - "go.sum"
+      - ".github/workflows/readme.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: readme-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  DOCGEN_REPO: ghrushneshr25/docgen
+
+jobs:
+  readme:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout DSA
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+
+      - name: Checkout docgen
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ env.DOCGEN_REPO }}
+          path: docgen
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.25.x"
+
+      - name: Generate readme.md
+        run: |
+          (cd docgen && go run . -readme-only -code "${GITHUB_WORKSPACE}" -readme "${GITHUB_WORKSPACE}/readme.md")
+
+      - name: Commit and push if changed
+        run: |
+          set -euo pipefail
+          if [ -z "$(git status --porcelain readme.md)" ]; then
+            echo "No readme change"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add readme.md
+          git commit -m "chore: regenerate readme from docgen"
+          git push

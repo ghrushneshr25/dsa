@@ -6,8 +6,8 @@
 # 2. In *this* (dsa) repo: Settings → Secrets and variables → Actions
 #    - Add secret DOCS_WRITE_TOKEN: fine-grained or classic PAT with
 #      contents: write on ghrushneshr25/dsa-pavilion (and read on docgen if private).
-#    (GITHUB_TOKEN in the job can push to *this* repo for readme updates only;
-#     it cannot push to another repo — hence DOCS_WRITE_TOKEN for dsa-pavilion.)
+#    (GITHUB_TOKEN cannot push to another repo — hence DOCS_WRITE_TOKEN for dsa-pavilion.)
+#    readme.md in this repo is updated by .github/workflows/readme.yml instead.
 # 3. Adjust DOCGEN_REPO / PAVILION_REPO if your remotes use different names.
 
 name: Regenerate documentation
@@ -41,7 +41,6 @@ jobs:
         uses: actions/checkout@v4
         with:
           path: dsa
-          # persist-credentials default true — needed for the readme push step
 
       - name: Checkout docgen
         uses: actions/checkout@v4
@@ -92,16 +91,3 @@ jobs:
           git -C dsa-pavilion add -A
           git -C dsa-pavilion commit -m "docs: regenerate from ${GITHUB_REPOSITORY}@${GITHUB_SHA:0:7}"
           git -C dsa-pavilion push "https://x-access-token:${DOCS_WRITE_TOKEN}@github.com/${PAVILION_REPO}.git" HEAD:master
-
-      - name: Commit and push readme in DSA (this) repo
-        run: |
-          set -euo pipefail
-          if [ -z "$(git -C dsa status --porcelain readme.md)" ]; then
-            echo "No readme change"
-            exit 0
-          fi
-          git -C dsa config user.name "github-actions[bot]"
-          git -C dsa config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git -C dsa add readme.md
-          git -C dsa commit -m "chore: regenerate readme from docgen" || { echo "Nothing to commit"; exit 0; }
-          git -C dsa push
