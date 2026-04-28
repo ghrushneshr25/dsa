@@ -14,5 +14,6 @@
 
 | Problem | Difficulty | Tags | Description | Code | Tests |
 |--------|------------|------|-------------|------|-------|
+| Doubly Linked List | Easy | linked-list, fundamentals | A doubly linked list is a linear data structure where each node contains: Data, Pointer to the next node, Pointer to the previous node. The next of last node points to nil, indicating the end of the list. The previous of first node points towards nil. | [Link](./linkedlist/doublylinkedlist.go) | — |
 | Singly Linked List | Easy | linked-list, fundamentals | A singly linked list is a linear data structure where each node contains: Data and Pointer to the next node. The last node points to nil, indicating the end of the list. | [Link](./linkedlist/singlelinkedlist.go) | — |
 
