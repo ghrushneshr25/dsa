@@ -77,7 +77,9 @@ func (list *LinkedList) InsertAtBeginning(data any) (err error) {
 		Data: data,
 		Next: nil,
 	}
+
 	defer list.IncreaseSize()
+	
 	if list.Head == nil {
 		list.Head = node
 	} else {
@@ -96,7 +98,9 @@ func (list *LinkedList) InsertAtEnd(data any) (err error) {
 		Data: data,
 		Next: nil,
 	}
+
 	defer list.IncreaseSize()
+
 	if list.Head == nil {
 		list.Head = node
 	} else {
@@ -117,6 +121,7 @@ func (list *LinkedList) Insert(position int, data any) (err error) {
 	if position < 1 || position > list.Size+1 {
 		return fmt.Errorf("index out of bounds: %d", position)
 	}
+
 	node := &ListNode{
 		Data: data,
 		Next: nil,
@@ -140,6 +145,7 @@ func (list *LinkedList) Insert(position int, data any) (err error) {
 		}
 		current = current.Next
 	}
+
 	node.Next = current.Next
 	current.Next = node
 	return
@@ -182,6 +188,7 @@ func (list *LinkedList) DeleteLast() (data any, err error) {
 	for current.Next.Next != nil {
 		current = current.Next
 	}
+
 	data = current.Next.Data
 	current.Next = nil
 	return
@@ -195,19 +202,24 @@ func (list *LinkedList) Delete(position int) (data any, err error) {
 	if position < 1 || position > list.GetSize() {
 		return nil, fmt.Errorf("index out of bound: %d", position)
 	}
+
 	defer list.DecreaseSize()
+
 	if position == 1 {
 		data = list.Head.Data
 		list.Head = list.Head.Next
 		return
 	}
+
 	current := list.Head
 	for i := 1; i < position-1; i++ {
 		current = current.Next
 	}
+
 	if current.Next == nil {
 		return nil, fmt.Errorf("unexpected nil node at position %d", position)
 	}
+
 	data = current.Next.Data
 	current.Next = current.Next.Next
 	return
