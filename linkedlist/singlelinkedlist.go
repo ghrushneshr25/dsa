@@ -36,7 +36,7 @@ type LinkedList struct {
 // @description Traversing means visiting each node from head to nil.
 // @time: O(n)
 // @space: O(1)
-func (list *LinkedList) Display() error {
+func (list *LinkedList) Display() (err error) {
 	if list.Head == nil {
 		return errors.New("list is empty")
 	}
@@ -47,7 +47,7 @@ func (list *LinkedList) Display() error {
 		fmt.Printf("%+v -> ", current.Data)
 		current = current.Next
 	}
-	return nil
+	return
 }
 
 // @operation Increase Size
@@ -59,7 +59,7 @@ func (list *LinkedList) IncreaseSize() {
 // @operation Decrease Size
 // @description Decrease the size of linked list
 func (list *LinkedList) DecreaseSize() {
-	list.Size++
+	list.Size--
 }
 
 // @operation Get Size
@@ -79,7 +79,7 @@ func (list *LinkedList) InsertAtBeginning(data any) (err error) {
 	}
 
 	defer list.IncreaseSize()
-	
+
 	if list.Head == nil {
 		list.Head = node
 	} else {
