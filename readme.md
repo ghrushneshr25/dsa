@@ -16,9 +16,3 @@
 |--------|------------|------|-------------|------|-------|
 | Singly Linked List | Easy | linked-list, fundamentals | A singly linked list is a linear data structure where each node contains: Data and Pointer to the next node. The last node points to nil, indicating the end of the list. | [Link](./linkedlist/singlelinkedlist.go) | — |
 
-## 📂 Docgen
-
-| Problem | Difficulty | Tags | Description | Code | Tests |
-|--------|------------|------|-------------|------|-------|
-| main | — | — | — | [Link](./docgen/main.go) | — |
-
