@@ -2,6 +2,8 @@
 
 ## 📂 Recursion Backtracking
 
+### Problems
+
 | Problem | Difficulty | Tags | Description | Code | Tests |
 |--------|------------|------|-------------|------|-------|
 | Towers of Hanoi | Easy | recursion, backtracking, divide-and-conquer | The Towers of Hanoi is a classic recursive problem involving three rods and multiple disks of different sizes. All disks start on the source rod in ascending order (smallest at the top). The goal is to move all disks to the destination rod using an auxiliary rod, while following strict movement rules. | [Link](./recursion-backtracking/problem1.go) | [Link](./recursion-backtracking/test/problem1_test.go) |
@@ -10,9 +12,12 @@
 | Generate K-ary Strings | Easy | recursion, backtracking | Generate all possible strings of length n using characters from 0 to k-1. | [Link](./recursion-backtracking/problem4.go) | [Link](./recursion-backtracking/test/problem4_test.go) |
 | Largest Connected Region in Matrix | Medium | recursion, dfs, graph | Given a 2D matrix of 0s and 1s, find the size of the largest connected region of 1s. Cells are connected in 8 directions (horizontal, vertical, diagonal). | [Link](./recursion-backtracking/problem5.go) | [Link](./recursion-backtracking/test/problem5_test.go) |
 
+
 ## 📂 Linkedlist
 
-| Problem | Difficulty | Tags | Description | Code | Tests |
+### Concepts
+
+| Concept | Difficulty | Tags | Description | Code | Tests |
 |--------|------------|------|-------------|------|-------|
 | Singly Linked List | Easy | linked-list, fundamentals | A singly linked list is a linear data structure where each node contains: Data and Pointer to the next node. The last node points to nil, indicating the end of the list. | [Link](./linkedlist/singlelinkedlist.go) | — |
 | Doubly Linked List | Easy | linked-list, fundamentals | A doubly linked list is a linear data structure where each node contains: Data, Pointer to the next node, Pointer to the previous node. The next of last node points to nil, indicating the end of the list. The previous of first node points towards nil. | [Link](./linkedlist/doublylinkedlist.go) | — |
@@ -20,4 +25,11 @@
 | XOR Linked List | Hard | linked-list, advanced, memory-optimization | An XOR Linked List is a memory-efficient version of a doubly linked list. Instead of storing separate prev and next pointers, each node stores a single field: both = XOR(prev, next) | [Link](./linkedlist/xorlinkedlist.go) | — |
 | Unrolled Linked List | Medium | linked-list, advanced, memory-optimization, cache-friendly | An Unrolled Linked List is a variation of a linked list where each node stores multiple elements in a contiguous block (array) instead of a single element. This reduces pointer overhead and improves cache locality, making traversal and sequential access more efficient than traditional linked lists. | [Link](./linkedlist/unrolledLinkedlist.go) | — |
 | Skip List | Medium | linked-list, probabilistic, advanced | A Skip List is a probabilistic data structure that allows fast search, insertion, and deletion in O(log n) average time. It consists of multiple levels of linked lists, where higher levels allow skipping multiple nodes. | [Link](./linkedlist/skiplist.go) | — |
+
+### Problems
+
+| Problem | Difficulty | Tags | Description | Code | Tests |
+|--------|------------|------|-------------|------|-------|
+| Find Kth Node from End of Linked List | Easy | linked-list, two-pointers, hashmap | Given a singly linked list, find the kth node from the end of the list. | [Link](./linkedlist/kthNodeFromEnd.go) | — |
+
 

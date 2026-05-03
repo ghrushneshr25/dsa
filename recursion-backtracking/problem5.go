@@ -1,5 +1,3 @@
-package recursionbacktracking
-
 // @index: 5
 // @problem: Largest Connected Region in Matrix
 // @difficulty: Medium
@@ -66,6 +64,8 @@ return count
 - Each cell is visited at most once
 - Similar to flood fill / number of islands problem
 */
+
+package recursionbacktracking
 
 func LargestConnectedRegionInMatrix(matrix [][]int) int {
 	rows := len(matrix)
