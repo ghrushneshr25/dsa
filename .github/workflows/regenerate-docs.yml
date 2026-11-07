@@ -46,6 +46,7 @@ jobs:
         with:
           repository: ${{ env.PAVILION_REPO }}
           path: dsa-pavilion
+          persist-credentials: false
 
       - name: Set up Go
         uses: actions/setup-go@v5
@@ -96,6 +97,7 @@ jobs:
 
           git -C dsa-pavilion config user.name "github-actions[bot]"
           git -C dsa-pavilion config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git -C dsa-pavilion config --unset-all http.https://github.com/.extraheader || true
           git -C dsa-pavilion checkout -B "${BRANCH}"
           git -C dsa-pavilion add -A
           git -C dsa-pavilion commit -m "docs: regenerate from ${GITHUB_REPOSITORY}@${SHORT_SHA}"
