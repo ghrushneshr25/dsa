@@ -14,7 +14,7 @@ package linkedlist_test
 import (
 	"testing"
 
-	linkedlist "godsa/linkedlist"
+	linkedlist "godsa/linked-list"
 )
 
 func buildList(values []int) *linkedlist.LinkedList {
