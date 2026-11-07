@@ -64,7 +64,7 @@ KthFromEnd_HashMap(list, k):
 
   return map[index - k].data
 
-@section: Approach 3 - Efficient (Two Pointer)
+@section: Approach 3 - Two Pointer
 
 @section: Algorithm
 KthFromEnd_TwoPointer(list, k):
