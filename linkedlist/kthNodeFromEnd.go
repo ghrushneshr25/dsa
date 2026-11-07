@@ -44,9 +44,6 @@ KthFromEnd_BruteForce(list, k):
 
   return current.data
 
-@section: Notes
-- Two traversals: first count nodes, second walk (length - k) steps from the head
-- Time O(n), extra space O(1)
 
 @section: Approach 2 - Hash Map
 
@@ -66,10 +63,6 @@ KthFromEnd_HashMap(list, k):
   if k > index -> error
 
   return map[index - k].data
-
-@section: Notes
-- One pass to fill the map; answer is the node at index (n - k) with 0-based indices
-- Time O(n), extra space O(n) for the map
 
 @section: Approach 3 - Efficient (Two Pointer)
 
@@ -91,9 +84,6 @@ KthFromEnd_TwoPointer(list, k):
 
   return slow.data
 
-@section: Notes
-- Single pass after advancing fast by k: gap between slow and fast stays k nodes until fast exits the list
-- Time O(n), extra space O(1); preferred when memory matters
 
 @section: Summary
 - Most optimal approach is Two Pointer

@@ -30,6 +30,6 @@
 
 | Problem | Difficulty | Tags | Description | Code | Tests |
 |--------|------------|------|-------------|------|-------|
-| Find Kth Node from End of Linked List | Easy | linked-list, two-pointers, hashmap | Given a singly linked list, find the kth node from the end of the list. | [Link](./linkedlist/kthNodeFromEnd.go) | — |
+| Find Kth Node from End of Linked List | Easy | linked-list, two-pointers, hashmap | Given a singly linked list, find the kth node from the end of the list. | [Link](./linkedlist/kthNodeFromEnd.go) | [Link](./linkedlist/test/kthNodeFromEnd_test.go) |
 
 
