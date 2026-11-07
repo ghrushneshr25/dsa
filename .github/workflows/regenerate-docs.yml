@@ -116,6 +116,4 @@ jobs:
             echo "Opened ${PR_URL}"
           fi
 
-          # If the repo allows auto-merge, queue it; Build still merges on success either way.
-          gh pr merge "${PR_URL}" --auto --squash --delete-branch || true
-          echo "PR ready: ${PR_URL}"
+          echo "PR ready: ${PR_URL} (pavilion Build squash-merges after npm run build succeeds)"
