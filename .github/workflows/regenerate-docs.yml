@@ -1,11 +1,12 @@
-# Checks out dsa (this) + dsa-pavilion (site + docgen), runs the generator,
-# commits readme.md here, and pushes generated docs to dsa-pavilion (its
-# deploy workflow then publishes GitHub Pages).
+# On push to master: regenerate docs, open a PR on dsa-pavilion, wait for the
+# Build check, then merge. GitHub Pages deploys from pavilion after that merge.
 #
 # One-time setup (GitHub):
 # In this (dsa) repo: Settings → Secrets and variables → Actions
-#   - DOCS_WRITE_TOKEN: PAT with contents: write on ghrushneshr25/dsa-pavilion
-#     (GITHUB_TOKEN cannot push to another repo.)
+#   - DOCS_WRITE_TOKEN: PAT with access to ghrushneshr25/dsa-pavilion:
+#       Contents: Read and write
+#       Pull requests: Read and write
+#     (GITHUB_TOKEN cannot open PRs in another repo.)
 
 name: Regenerate documentation
 
@@ -32,6 +33,7 @@ env:
 jobs:
   regen:
     runs-on: ubuntu-latest
+    timeout-minutes: 25
     steps:
       - name: Checkout DSA (this repository)
         uses: actions/checkout@v4
@@ -51,7 +53,7 @@ jobs:
         with:
           go-version: "1.25.x"
 
-      - name: Run docgen
+      - name: Generate docs
         run: |
           go -C dsa-pavilion/docgen run . \
             -code "${GITHUB_WORKSPACE}/dsa" \
@@ -60,25 +62,6 @@ jobs:
             -readme "${GITHUB_WORKSPACE}/dsa/readme.md" \
             -base "/dsa-pavilion/" \
             -github-routes "${GITHUB_WORKSPACE}/dsa-pavilion/src/data/dsaGithubRoutes.json"
-
-      - name: Commit and push dsa-pavilion site
-        env:
-          DOCS_WRITE_TOKEN: ${{ secrets.DOCS_WRITE_TOKEN }}
-        run: |
-          set -euo pipefail
-          if [ -z "${DOCS_WRITE_TOKEN:-}" ]; then
-            echo "::error::Add secret DOCS_WRITE_TOKEN in this (dsa) repo: PAT with Contents: Read and write on dsa-pavilion."
-            exit 1
-          fi
-          if [ -z "$(git -C dsa-pavilion status --porcelain)" ]; then
-            echo "No changes under dsa-pavilion/"
-          else
-            git -C dsa-pavilion config user.name "github-actions[bot]"
-            git -C dsa-pavilion config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-            git -C dsa-pavilion add -A
-            git -C dsa-pavilion commit -m "docs: regenerate from ${GITHUB_REPOSITORY}@${GITHUB_SHA:0:7}"
-            git -C dsa-pavilion push "https://x-access-token:${DOCS_WRITE_TOKEN}@github.com/${PAVILION_REPO}.git" HEAD:master
-          fi
 
       - name: Commit and push readme.md
         run: |
@@ -92,3 +75,56 @@ jobs:
           git -C dsa add readme.md
           git -C dsa commit -m "chore: regenerate readme"
           git -C dsa push
+
+      - name: Open dsa-pavilion PR, wait for Build, merge
+        env:
+          GH_TOKEN: ${{ secrets.DOCS_WRITE_TOKEN }}
+          DOCS_WRITE_TOKEN: ${{ secrets.DOCS_WRITE_TOKEN }}
+        run: |
+          set -euo pipefail
+          if [ -z "${DOCS_WRITE_TOKEN:-}" ]; then
+            echo "::error::Add secret DOCS_WRITE_TOKEN in this (dsa) repo: PAT with Contents + Pull requests write on dsa-pavilion."
+            exit 1
+          fi
+
+          if [ -z "$(git -C dsa-pavilion status --porcelain)" ]; then
+            echo "No changes under dsa-pavilion/"
+            exit 0
+          fi
+
+          SHORT_SHA="${GITHUB_SHA:0:7}"
+          BRANCH="docs/regenerate-${SHORT_SHA}"
+
+          git -C dsa-pavilion config user.name "github-actions[bot]"
+          git -C dsa-pavilion config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git -C dsa-pavilion checkout -B "${BRANCH}"
+          git -C dsa-pavilion add -A
+          git -C dsa-pavilion commit -m "docs: regenerate from ${GITHUB_REPOSITORY}@${SHORT_SHA}"
+          git -C dsa-pavilion push \
+            "https://x-access-token:${DOCS_WRITE_TOKEN}@github.com/${PAVILION_REPO}.git" \
+            "HEAD:refs/heads/${BRANCH}"
+
+          if PR_URL="$(gh pr view "${BRANCH}" --repo "${PAVILION_REPO}" --json url --jq .url 2>/dev/null)" && [ -n "${PR_URL}" ]; then
+            echo "Reusing existing PR: ${PR_URL}"
+          else
+            PR_URL="$(gh pr create --repo "${PAVILION_REPO}" \
+              --base master \
+              --head "${BRANCH}" \
+              --title "docs: regenerate from dsa@${SHORT_SHA}" \
+              --body "Automated docs refresh from ${GITHUB_REPOSITORY}@${SHORT_SHA}. Opened by the dsa regenerate-docs workflow. The Build check must pass before merge; GitHub Pages deploys after merge.")"
+            echo "Opened ${PR_URL}"
+          fi
+
+          echo "Waiting for PR checks to start…"
+          for _ in $(seq 1 36); do
+            if gh pr checks "${PR_URL}" >/dev/null 2>&1; then
+              break
+            fi
+            sleep 5
+          done
+
+          echo "Watching PR checks…"
+          gh pr checks "${PR_URL}" --watch --fail-fast
+
+          gh pr merge "${PR_URL}" --squash --delete-branch
+          echo "Merged ${PR_URL}"

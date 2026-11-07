@@ -1,0 +1,61 @@
+# PR check: annotations in this repo must generate docs and the Docusaurus site must build.
+name: Docs check
+
+on:
+  pull_request:
+    paths:
+      - "**/*.go"
+      - "go.mod"
+      - "go.sum"
+      - ".github/workflows/docs-check.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: docs-check-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  PAVILION_REPO: ghrushneshr25/dsa-pavilion
+
+jobs:
+  generate-and-build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout DSA (pull request)
+        uses: actions/checkout@v4
+        with:
+          path: dsa
+
+      - name: Checkout dsa-pavilion (site + docgen)
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ env.PAVILION_REPO }}
+          path: dsa-pavilion
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.25.x"
+
+      - name: Generate docs
+        run: |
+          go -C dsa-pavilion/docgen run . \
+            -code "${GITHUB_WORKSPACE}/dsa" \
+            -docs "${GITHUB_WORKSPACE}/dsa-pavilion/docs" \
+            -sidebar "${GITHUB_WORKSPACE}/dsa-pavilion/sidebars.js" \
+            -readme "${GITHUB_WORKSPACE}/dsa/readme.md" \
+            -base "/dsa-pavilion/" \
+            -github-routes "${GITHUB_WORKSPACE}/dsa-pavilion/src/data/dsaGithubRoutes.json"
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: dsa-pavilion/package-lock.json
+
+      - name: Build site
+        working-directory: dsa-pavilion
+        run: |
+          npm ci
+          npm run build
