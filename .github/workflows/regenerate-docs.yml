@@ -1,5 +1,5 @@
-# On push to master: regenerate docs, open a PR on dsa-pavilion, wait for the
-# Build check, then merge. GitHub Pages deploys from pavilion after that merge.
+# On push to master: regenerate docs and open a PR on dsa-pavilion.
+# Pavilion's Build workflow squash-merges that PR when npm run build succeeds.
 #
 # One-time setup (GitHub):
 # In this (dsa) repo: Settings → Secrets and variables → Actions
@@ -33,7 +33,7 @@ env:
 jobs:
   regen:
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 15
     steps:
       - name: Checkout DSA (this repository)
         uses: actions/checkout@v4
@@ -76,7 +76,7 @@ jobs:
           git -C dsa commit -m "chore: regenerate readme"
           git -C dsa push
 
-      - name: Open dsa-pavilion PR, wait for Build, merge
+      - name: Open dsa-pavilion PR
         env:
           GH_TOKEN: ${{ secrets.DOCS_WRITE_TOKEN }}
           DOCS_WRITE_TOKEN: ${{ secrets.DOCS_WRITE_TOKEN }}
@@ -111,20 +111,10 @@ jobs:
               --base master \
               --head "${BRANCH}" \
               --title "docs: regenerate from dsa@${SHORT_SHA}" \
-              --body "Automated docs refresh from ${GITHUB_REPOSITORY}@${SHORT_SHA}. Opened by the dsa regenerate-docs workflow. The Build check must pass before merge; GitHub Pages deploys after merge.")"
+              --body "Automated docs refresh from ${GITHUB_REPOSITORY}@${SHORT_SHA}. Pavilion Build squash-merges this PR when npm run build succeeds.")"
             echo "Opened ${PR_URL}"
           fi
 
-          echo "Waiting for PR checks to start…"
-          for _ in $(seq 1 36); do
-            if gh pr checks "${PR_URL}" >/dev/null 2>&1; then
-              break
-            fi
-            sleep 5
-          done
-
-          echo "Watching PR checks…"
-          gh pr checks "${PR_URL}" --watch --fail-fast
-
-          gh pr merge "${PR_URL}" --squash --delete-branch
-          echo "Merged ${PR_URL}"
+          # If the repo allows auto-merge, queue it; Build still merges on success either way.
+          gh pr merge "${PR_URL}" --auto --squash --delete-branch || true
+          echo "PR ready: ${PR_URL}"
